@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>reporte</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.css" />
+</head>
+<body>
+
+<div class="container">
+    <br>
+<center><div id="form" style="width: 750px;"></div></center>
+<br><br>
+<div id="grid" style="width: 100%; height: 350px; overflow: hidden;"></div>
+<br><br>
+<div id="grid2" style="width: 100%; height: 350px; overflow: hidden;"></div>
+</div>
+
+<script type="text/javascript">
+
+
+let peopler = mifuncion();
+let grid1= '';
+function carga (peop){
+
+query(() => {
+    
+    let form = new w2form({
+        box: query('#form')[0],
+        name: 'form',
+        url: 'server/post',
+        header: 'Filtros',
+     
+        fields: [
+            
+            { field: 'date1', type: 'eu-date',
+                html: { label: 'Fecha Inicio', attr: 'style="width: 90px background-color : #d1d1d1;  "'}
+            },
+            { field: 'date2', type: 'eu-date',
+                html: { label: 'Fecha fin', attr: 'style="width: 90px background-color : #d1d1d1;"' }
+
+            },
+            { field: 'list', type: 'list',
+                html: { label: 'Departamentos' } ,
+                options: { items : w2utils.clone(peop) }
+            },
+           
+         
+           
+        ],
+
+        actions: {
+
+            Borrar() {
+                this.clear();
+            },
+            Consultar() {    
+
+            var fecha1 = $('#date1').val()   
+            var fecha2 = $('#date2').val()  
+
+            if(fecha1==''||fecha2=='') {
+                alert('la fecha son obligatorias')
+                return;
+            }
+
+            var idDepartamento = ($('#list_search').attr('data-selected'))
+            if(idDepartamento===undefined)idDepartamento='0';
+
+
+            var url_salida = 'controller.php?id=1&&fecha1='+fecha1+'&&fecha2='+fecha2+'&&idDepartamento='+idDepartamento; 
+            var url_salida2 = 'controller.php?id=2&&fecha1='+fecha1+'&&fecha2='+fecha2+'&&idDepartamento='+idDepartamento;
+         // alert(url_salida);
+
+                          grid1 =  $('#grid').w2grid({
+                            name: 'grid',
+                            url : url_salida,
+                            show: { toolbar: true, },        
+                            columnGroups: [                                
+                                { text: 'PROYECTADO', span: 11}
+                            ],                   
+                            columns: [
+                                { field: 'Departamento', text: 'Departamento', size: '30%', searchable: true, sortable: true },
+                                { field: 'Nombre_Planta', text: 'Nombre Planta', size: '30%', searchable: true, sortable: true },
+                                { field: 'Hornos', text: 'Hornos', size: '40%', searchable: true, sortable: true },
+                                { field: 'Jornada', text: 'Jornada', size: '120px', searchable: true, sortable: true },
+                                { field: 'Dias', text: 'Dias', size: '120px', searchable: true, sortable: true },
+                                { field: 'Cargue', text: 'Cargue', size: '120px', searchable: true, sortable: true },
+                                { field: 'Consumo_mezcla', text: 'Consumo mezcla', size: '120px', searchable: true, sortable: true },
+                                { field: 'Deshorne', text: 'Deshorne', size: '120px', searchable: true, sortable: true },
+                                { field: 'Produccion_coque', text: 'Produccion coque', size: '120px', searchable: true, sortable: true },
+                                { field: 'FechaInicio', text: 'Fecha Inicio', size: '120px', searchable: true, sortable: true },
+                                { field: 'FechaFin', text: 'Fecha Fin', size: '120px', searchable: true, sortable: true }
+                            ]                     
+                            
+
+                        });
+
+                           $('#grid2').w2grid({
+                            name: 'grid2',
+                            url : url_salida2,
+                            show: { toolbar: true, },
+                             columnGroups: [                                
+                                { text: 'EJECUTADO', span: 10 }
+                            ],
+                            columns: [
+                                { field: 'Departamento', text: 'Departamento', size: '30%', searchable: true, sortable: true },
+                                { field: 'Nombre_Planta', text: 'Nombre Planta', size: '30%', searchable: true, sortable: true },
+                                { field: 'cargue_estimado', text: 'cargue estimado', size: '40%', searchable: true, sortable: true },
+                                { field: 'mezcla_estimado', text: 'mezcla estimado', size: '120px', searchable: true, sortable: true },
+                                { field: 'Consumo_mezcla_real', text: 'Consumo mezcla real', size: '120px', searchable: true, sortable: true },
+                                { field: 'produccion_estimado', text: 'produccion estimado', size: '120px', searchable: true, sortable: true },
+                                { field: 'coque_estimado', text: 'coque estimado', size: '120px', searchable: true, sortable: true },
+                                { field: 'coque_real', text: 'coque real', size: '120px', searchable: true, sortable: true },
+                                { field: 'Fecha_Inicio', text: 'Fecha Inicio', size: '120px', searchable: true, sortable: true },
+                                { field: 'Fecha_Fin', text: 'FechaFin', size: '120px', searchable: true, sortable: true }
+                            ]
+                        });
+
+// 
+                    
+            }//finconsultar,
+   //          ,Agregar() {
+               
+   //  grid1.add([{recid:1,Departamento:"Jose",Nombre_Planta:"CARBOAN SAS",Hornos:22,Jornada:"72",Dias:"3",Cargue:"4.20",Consumo_mezcla:"0.00",Deshorne:"2.73",Produccion_coque:"0.00",FechaInicio:"2022/07/01",FechaFin:"2022/07/01"}
+   // ]) ;
+
+
+
+
+   //          }//fin agreagr
+        }//fin actions
+    });
+
+     });
+ 
+
+//cambiar color
+$('button[name=Consultar]').addClass('w2ui-btn-green');
+$('button[name=Borrar]').addClass('w2ui-btn-red');
+$('button[name=Borrar]').css('background','#E54522');
+
+$('#date1').w2field('date',  { format: 'dd/mm/yyyy' });
+$('#date2').w2field('date',  { format: 'dd/mm/yyyy' });
+
+
+
+w2ui.form.on('load', function(event) {
+    console.log('ddd');
+});
+    }
+
+   
+
+
+
+
+function mifuncion (){  
+    cadena='';
+
+
+    $.ajax({
+            type: "GET",
+            url: "controller.php?id=3",
+            data: cadena,
+            success: function (rr){               
+             var arr = JSON.parse(rr);              
+  
+   let people = []    
+
+            for (var i = 0; i < arr.length; i++) {
+                 let iter = {'id':arr[i].id, 'text': arr[i].text }                    
+                people.push(iter);
+             }   
+           carga(people)
+            }
+      }); 
+}
+
+
+
+</script>
+
+</body>
+</html>
+
+

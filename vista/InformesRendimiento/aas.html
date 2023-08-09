@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Modelo de costeo</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/vitmalina/w2ui/master/dist/w2ui.min.css" />
+</head>
+
+<body>
+    <div id="layout" style="width: 100%; height:100vh;"></div>
+
+
+
+
+    <script type="text/javascript">
+
+        var pstyle =  'border: 1px solid red, background: red';
+     
+        $(document).ready(function () {
+            getPuertos();
+        });
+        function getPuertos() {
+            let xhr = new XMLHttpRequest();
+            let url = "asd.php/puertos";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            var param = { calltype: "form", object_name: 0 };
+            var data = JSON.stringify(param);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                     console.log(this.responseText);
+                    const src_layout = JSON.parse(this.responseText);
+                      console.log(src_layout);
+                    query(() => {
+                        new w2tabs({
+                            //box: query('#tabs')[0],
+                            name: 'tabs',
+                            //active: 'tab1',
+                            tabs: src_layout.puertos,
+                            onClick: function (event) {
+                                //query('#selected-tab').html(event.target);
+                                //alert(event.target)
+                                getventas(event.target);
+
+                            }
+                        });
+                    });
+                    w2ui.layout.html('top', w2ui.tabs);
+                }
+
+            };
+            xhr.send(data);
+        }
+
+        function getventas(p_id) {
+            
+            let xhr = new XMLHttpRequest();
+            let url = "asd.php/ventas";
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            var param = { id: p_id };
+            var data = JSON.stringify(param);
+            xhr.send(data);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //result.innerHTML = this.responseText;
+                    // console.log(this.responseText);
+                    const src_layout = JSON.parse(this.responseText);
+                    var config = {
+                        sidebar: {
+                            name: 'sidebar_ventas',
+                            nodes: src_layout.ventas,
+                            onClick(event) {
+                                getCostos(event.target);
+                                getDetalle(event.target);
+                            }
+                        }
+
+                    };
+                    let sidebar = new w2sidebar(config.sidebar);
+                    w2ui.layout.html('left', w2ui.sidebar_ventas);
+                }else{
+                   console.log('no data'); 
+                }
+                ;
+            }
+
+        }
+
+
+        function getCostos(p_id) {
+            let xhr = new XMLHttpRequest();
+            let url = "asd.php/costos";
+
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            var param = { id: p_id };
+            var data = JSON.stringify(param);
+            xhr.send(data);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //result.innerHTML = this.responseText;
+                    console.log(this.responseText);
+                    $().w2destroy('grid');
+                    var s=JSON.parse(this.responseText);
+                     query(() => {
+                        new w2grid({
+                            name: 'grid',
+                            //box: query('#grid')[0],
+                            //url: 'data/list.json',
+                            method: 'GET', // need this to avoid 412 error on Safari
+                            columns: s.columns,
+                            columnGroups: s.columnGroups,
+                            records: s.records
+                        })
+                    });
+                    w2ui.layout.html('main', w2ui.grid);
+                    //const src_layout = JSON.parse(this.responseText);
+                };
+                //     w2ui.layout.html('left', w2ui.sidebar_ventas);
+            };
+        }
+
+        function getDetalle(p_id) {
+            let xhr = new XMLHttpRequest();
+            let url = "asd.php/detalle";
+
+            xhr.open("POST", url, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            var param = { id: p_id };
+            var data = JSON.stringify(param);
+            xhr.send(data);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    //result.innerHTML = this.responseText;
+                    console.log(this.responseText);
+                    const src_form = JSON.parse(this.responseText);
+            $().w2destroy('form');
+            query(() => {
+                        let form = new w2form({
+                            //box: query('#form')[0],                            
+                            name: 'form',
+                            style: 'border: 1px; background-color: transparent;',
+                            //url: 'server/post',
+                            record: src_form,
+                            //formHTML: query('#form').html(),
+                            fields: [
+                                { field: 'Vessel', type: 'text', required: false, html: {
+                    //group: 'General'
+                    page: 0,
+                    column: 0,
+                    label: 'Motonave',
+                    span: 8,
+                } }, 
+                { field: 'DateBeginingProj', type: 'text', required: false, html: {
+                    //group: 'General'
+                    page: 0,
+                    column: 1,
+                    label: 'Inicio producci&oacute;n',
+                    span: 8,
+                    style: 'background-color: blue'    
+                } },
+                { field: 'DateEndingProj', type: 'text', required: false, html: {
+                    //group: 'General'
+                    page: 0,
+                    column: 2,
+                    label: 'Final producci&oacute;n',
+                    span: 8
+                } },
+                 { field: 'LayCanStart', type: 'text', required: false, html: {
+                    //group: 'General'
+                    page: 0,
+                    column: 0,
+                    label: 'Carga en puerto desde',
+                    span: 8
+                } }
+                , 
+                 { field: 'LayCanEnd', type: 'text', required: false, html: {
+                    //group: 'General'
+                    page: 0,
+                    column: 1,
+                    label: 'hasta',
+                    span: 8
+                } },
+                 { field: 'Cargo', type: 'text', required: false, html: {
+                    //group: 'General',
+                    page: 0,
+                    column: 0,
+                    label: 'Carga requerida',
+                    span: 8
+                } },
+                 { field: 'Volume', type: 'float', required: false, html: {
+                    //group: 'General',
+                    page: 0,
+                    column: 1,
+                    label: 'Volumen requerido',
+                    span: 8
+                } }
+                            ],
+                            /*actions: {
+                                reset() {
+                                    this.clear();
+                                },
+                                save() {
+                                    this.save();
+                                }
+                            }*/
+                        });
+                        w2ui.layout.html('bottom', w2ui.form);
+                        w2ui.form.disable('Volume');
+                        w2ui.form.disable('Cargo');
+                        w2ui.form.disable('LayCanEnd');
+                        w2ui.form.disable('LayCanStart');
+                        w2ui.form.disable('DateEndingProj');
+                        w2ui.form.disable('DateBeginingProj');
+                        w2ui.form.disable('Vessel');
+                    });
+
+                };
+                //     w2ui.layout.html('left', w2ui.sidebar_ventas);
+            };
+        }
+
+
+        query(() => {
+            let pstyle = 'border: 1px solid #efefef; padding: 5px;';
+            new w2layout({
+                box: query('#layout')[0],
+                name: 'layout',
+                panels: [
+                    { type: 'top', size: 50, style: pstyle, html: '' },
+                    { type: 'left', size: 150, style: pstyle, html: '' },
+                    { type: 'main', style: pstyle, html: '' },
+                    { type: 'bottom', size: 200, style: 'background:#F0F0F0', html: ''}
+                ]
+            });
+        });
+    </script>
+
+</body>
+
+</html>

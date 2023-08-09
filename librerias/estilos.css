@@ -1,0 +1,90 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.wrap{
+    width: 100%;
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
+}
+.tarjeta-wrap{
+    margin: 15px;
+    -webkit-perspective: 800;
+    perspective: 800;
+}
+.tarjeta{
+    width: 300px;
+    height: 300px;
+    -webkit-background: #419641;
+    background: #419641;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: .7s ease;
+    -webkit-box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+    -moz-box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+    box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+}
+.tarjeta1{
+    width: 300px;
+    height: 300px;
+    -webkit-background: #e38d13;
+    background: #e38d13;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: .7s ease;
+    -webkit-box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+    -moz-box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+    box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+}
+.tarjeta2{
+    width: 300px;
+    height: 300px;
+    -webkit-background: #d9534f;
+    background: #d9534f;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: .7s ease;
+    -webkit-box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+    -moz-box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+    box-shadow: 0px 10px 15px -5px rgba(0,0,0,0.65);
+}
+.delante, .atras{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+.delante{
+    width: 100%;
+}
+.atras{
+    transform: rotateY(180deg);
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    color: #fff;
+    font-family: "open sans";
+}
+.tarjeta-wrap:hover .tarjeta{
+    transform: rotateY(180deg);
+
+}
+.tarjeta-wrap:hover .tarjeta1{
+    transform: rotateY(180deg);
+
+}
+.tarjeta-wrap:hover .tarjeta2{
+    transform: rotateY(180deg);
+
+}
+.card1{
+    background-size: cover;
+}
