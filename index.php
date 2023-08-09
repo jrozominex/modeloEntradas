@@ -3,7 +3,7 @@
 //header("Location: ../Inicio/index.php");
 echo '<script language = javascript>
         self.location = "../Inicio/index.php";
-        </script>';
+        </script> ';
 ?>
 <!DOCTYPE html>
 <html>
